@@ -1,0 +1,75 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: userProgress
+    // Document ID: {uid}
+    // Fields:
+    //   - uid: string (required) - The user's ID
+    //   - completedIds: list (required) - Array of completed simulation IDs
+    //   - updatedAt: string (required) - ISO 8601 timestamp
+    //
+    // ===============================================================
+
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidUserProgress(data) {
+      return data.keys().hasAll(['uid', 'completedIds', 'updatedAt']) &&
+             data.keys().hasOnly(['uid', 'completedIds', 'updatedAt']) &&
+             data.uid is string &&
+             data.uid == request.auth.uid &&
+             data.completedIds is list &&
+             data.updatedAt is string;
+    }
+
+    function isValidStudentProfile(data) {
+      return data.keys().hasAll(['uid', 'memory', 'style', 'tone', 'updatedAt']) &&
+             data.keys().hasOnly(['uid', 'memory', 'style', 'tone', 'updatedAt']) &&
+             data.uid is string &&
+             data.uid == request.auth.uid &&
+             data.memory is string &&
+             data.style is string &&
+             data.tone is string &&
+             data.updatedAt is string;
+    }
+
+    function isValidAssistantChat(data) {
+      return data.keys().hasAll(['uid', 'messages']) &&
+             data.keys().hasOnly(['uid', 'messages']) &&
+             data.uid is string &&
+             data.uid == request.auth.uid &&
+             data.messages is list;
+    }
+
+    match /userProgress/{uid} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid) && isValidUserProgress(request.resource.data);
+      allow update: if isOwner(uid) && isValidUserProgress(request.resource.data);
+      allow delete: if false;
+    }
+
+    match /studentProfiles/{uid} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid) && isValidStudentProfile(request.resource.data);
+      allow update: if isOwner(uid) && isValidStudentProfile(request.resource.data);
+      allow delete: if false;
+    }
+
+    match /assistantChats/{uid} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid) && isValidAssistantChat(request.resource.data);
+      allow update: if isOwner(uid) && isValidAssistantChat(request.resource.data);
+      allow delete: if false;
+    }
+  }
+}

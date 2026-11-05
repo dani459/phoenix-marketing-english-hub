@@ -1,0 +1,95 @@
+{
+  "entities": {
+    "userProgress": {
+      "title": "User Progress",
+      "description": "Stores the simulation progress for a user.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The unique identifier for the user."
+        },
+        "completedIds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "List of simulation IDs completed by the user."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The last time the progress was updated."
+        }
+      },
+      "required": ["uid", "completedIds", "updatedAt"]
+    },
+    "studentProfile": {
+      "title": "Student Profile",
+      "description": "Stores AI-learned characteristics and memory of the student.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The unique identifier for the user."
+        },
+        "memory": {
+          "type": "string",
+          "description": "Accumulated facts and context about the student."
+        },
+        "style": {
+          "type": "string",
+          "description": "Analysis of the student's language style."
+        },
+        "tone": {
+          "type": "string",
+          "description": "Analysis of the student's typical tone."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The last time the profile was updated."
+        }
+      },
+      "required": ["uid", "memory", "style", "tone", "updatedAt"]
+    },
+    "assistantChat": {
+      "title": "Assistant Chat",
+      "description": "Stores the conversation history with the personal AI assistant.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The unique identifier for the user."
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "role": { "type": "string" },
+              "text": { "type": "string" },
+              "timestamp": { "type": "string", "format": "date-time" }
+            }
+          },
+          "description": "The list of messages in the conversation."
+        }
+      },
+      "required": ["uid", "messages"]
+    }
+  },
+  "firestore": {
+    "/userProgress/{uid}": {
+      "schema": "userProgress",
+      "description": "Collection of user progress documents, indexed by user ID."
+    },
+    "/studentProfiles/{uid}": {
+      "schema": "studentProfile",
+      "description": "AI-maintained profile of the student."
+    },
+    "/assistantChats/{uid}": {
+      "schema": "assistantChat",
+      "description": "Personal assistant chat history for each user."
+    }
+  }
+}

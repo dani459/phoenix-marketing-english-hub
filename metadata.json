@@ -1,0 +1,6 @@
+{
+  "name": "Phoenix Marketing English Hub",
+  "description": "A premium Windows 11 styled learning hub for marketing professionals, branded by Phoenix Academic Counseling.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
